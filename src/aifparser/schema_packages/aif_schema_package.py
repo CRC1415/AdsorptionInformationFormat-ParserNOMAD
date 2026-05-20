@@ -758,53 +758,54 @@ class AdsorptionInformationFile(PlotSection, EntryData, ArchiveSection):
         try:
             #Check if there's any .cif file provided in main section
             if self.aif_cif_file:
-                if not self.aif_cif_file.endswith('.cif'):
-                    raise DataFileError(f"The file '{self.aif_cif_file}' must have a .cif extension.")
-                
-                from ase.io import read
-                from nomad.normalizing import normalizers
-
-                system_normalizer_cls = None
-                for normalizer in normalizers:
-                    if normalizer.__name__ == 'SystemNormalizer':
-                        system_normalizer_cls = normalizer
-                        break
-
-                from nomad.atomutils import Formula
-                from nomad.datamodel.results import Material, System
-                from nomad.normalizing.common import nomad_atoms_from_ase_atoms
-                from nomad.normalizing.topology import add_system, add_system_info
-
-                with archive.m_context.raw_file(self.aif_cif_file) as f:
-                    try:
-                        ase_atoms = read(f.name)
-                    except Exception as e:
-                        raise ValueError('could not read structure file') from e
-
-                    if not archive.results.material:
-                        archive.results.material = Material()
-                        # extract molecular_formula out of cif file
-                        self.molecular_formula = ase_atoms.get_chemical_formula()
-                        formula = Formula(ase_atoms.get_chemical_formula())
-                        formula.populate(archive.results.material)
-
-                    # Create a System: this is a NOMAD specific data structure for storing structural
-                    # and chemical information that is suitable for both experiments and simulations.
-                    system = System(
-                        atoms=nomad_atoms_from_ase_atoms(ase_atoms),
-                        label='File:' + self.aif_cif_file,
-                        description='Structure read from the file.',
-                        structural_type='bulk',
-                        dimensionality='3D',
-                    )
-
-                    # archive.results.topology can used to represent relations between systems.
-                    # E.g. "System A is part of System B". In our case there is only a single system.
-                    topology = {}
-                    add_system_info(system, topology)
-                    add_system(system, topology)
-                    archive.results.material.topology = list(topology.values())
-                    
+               if not self.aif_cif_file.endswith('.cif'):
+                   raise DataFileError(f"The file '{self.aif_cif_file}' must have a .cif extension.")
+            
+               from ase.io import read
+               from nomad.atomutils import Formula
+               from nomad.datamodel.results import Material, System
+               from nomad.normalizing.common import nomad_atoms_from_ase_atoms
+            
+               # Open the CIF file within the NOMAD archive context
+               with archive.m_context.raw_file(self.aif_cif_file) as f:
+                   try:
+                       # Specify index=0 for first block, handle disorder and occupancy
+                       ase_atoms = read(
+                           f.name,
+                           index=0,  # Always specify index for multi-block CIFs
+                           #disorder_groups=-2,  # Avoid spurious atoms from disorder
+                           #fractional_occupancies=True,  # Preserve occupancy info
+                           #qstore_tags=True  # Store CIF metadata in Atoms.info if needed
+                       )
+                   except Exception as e:
+                       raise ValueError('Could not read structure file') from e
+            
+                   # Ensure material metadata is present
+                   if not archive.results.material:
+                       archive.results.material = Material()
+                       formula_str = ase_atoms.get_chemical_formula()
+                       self.molecular_formula = formula_str
+                       formula = Formula(formula_str)
+                       formula.populate(archive.results.material)
+            
+                   # Convert ASE Atoms to NOMAD System
+                   system = System(
+                       atoms=nomad_atoms_from_ase_atoms(ase_atoms),
+                       label='File:' + self.aif_cif_file,
+                       description='Structure read from the file.',
+                       structural_type='bulk',
+                       dimensionality='3D',
+                   )
+            
+                   # Register the system in the archive
+                   if not hasattr(archive.results, 'systems') or archive.results.systems is None:
+                       archive.results.systems = []
+                   archive.results.systems.append(system)
+            
+                   # Optionally, run the normalizer pipeline (if not run automatically)
+                   # from nomad.normalizing.system import SystemNormalizer
+                   # SystemNormalizer(archive).normalize()
+            
 
         except Exception as e:
             logger.error('Error exception during parsing/processing.', exc_info=e)
