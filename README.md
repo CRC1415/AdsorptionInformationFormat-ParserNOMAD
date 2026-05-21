@@ -1,6 +1,6 @@
 # aifparser
 
-Parser for the .aif file (Adsorption Information File) for NOMAD
+Parser for the .aif file (Adsorption Information File) for NOMAD >= v1.4.2
 
 This `nomad` plugin was generated with `Cookiecutter` along with `@nomad`'s [`cookiecutter-nomad-plugin`](https://github.com/FAIRmat-NFDI/cookiecutter-nomad-plugin) template.
 

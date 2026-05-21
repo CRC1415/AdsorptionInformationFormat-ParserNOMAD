@@ -765,6 +765,7 @@ class AdsorptionInformationFile(PlotSection, EntryData, ArchiveSection):
                from nomad.atomutils import Formula
                from nomad.datamodel.results import Material, System
                from nomad.normalizing.common import nomad_atoms_from_ase_atoms
+               from nomad.normalizing.topology import add_system, add_system_info
             
                # Open the CIF file within the NOMAD archive context
                with archive.m_context.raw_file(self.aif_cif_file) as f:
@@ -796,15 +797,31 @@ class AdsorptionInformationFile(PlotSection, EntryData, ArchiveSection):
                        structural_type='bulk',
                        dimensionality='3D',
                    )
-            
+                   
+                   #print(system)
+                   #from nomad.datamodel.metainfo import runschema
+                   
                    # Register the system in the archive
-                   if not hasattr(archive.results, 'systems') or archive.results.systems is None:
-                       archive.results.systems = []
-                   archive.results.systems.append(system)
-            
+                   #if not hasattr(archive.results, 'systems') or archive.results.systems is None:
+                   #    archive.results.systems = []
+                   #archive.results.systems.append(system)
+                   topology = {}
+                   
+                   #if  archive.results.material.topology is None:
+                   #     topology = {}
+                   #else: # Handle topology (even for a single system)
+                   #     topology = archive.results.material.topology[-1]
+                   
+                   
+                   
+                   add_system_info(system, topology)
+                   add_system(system, topology)
+                   
+                   archive.results.material.topology = list(topology.values())
+
                    # Optionally, run the normalizer pipeline (if not run automatically)
-                   # from nomad.normalizing.system import SystemNormalizer
-                   # SystemNormalizer(archive).normalize()
+                   #from nomad.normalizing.system import SystemNormalizer
+                   #SystemNormalizer(archive).normalize()
             
 
         except Exception as e:
