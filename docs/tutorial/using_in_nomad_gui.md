@@ -141,7 +141,7 @@ data.aif_temperature = *
 
 ### Metadata Management
 
-1. View all metadata fields extracted from the AIF file, see [Reference section](reference/references.md)
+1. View all metadata fields extracted from the AIF file, see [Reference section](../reference/references.md)
 2. Edit metadata if needed (depending on your NOMAD configuration and r/w access)
 3. Use metadata for advanced searching and categorization
 

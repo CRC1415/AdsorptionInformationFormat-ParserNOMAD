@@ -25,7 +25,7 @@ The AIF format enables researchers to store and share adsorption data in a struc
 To get started with the AIF parser, check out:
 
 - [Introduction](tutorial/tutorial.md)
-- [Using in NOMAD Gui](tutorial/using_in_nomad_gui.md)
+- [Using in NOMAD GUI](tutorial/using_in_nomad_gui.md)
 
 </div>
 <div markdown="block">

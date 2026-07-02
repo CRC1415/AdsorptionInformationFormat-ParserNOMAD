@@ -31,7 +31,7 @@ Once the plugin is installed and configured, you can parse AIF files in several 
 
 ### Using the NOMAD GUI
 
-Please see the [Tutorial](tutorial/tutorial.md).
+Please see the [Tutorial](../tutorial/using_in_nomad_gui.md).
 
 ### Using the NOMAD CLI
 
