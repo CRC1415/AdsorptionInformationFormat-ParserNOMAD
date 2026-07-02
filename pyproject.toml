@@ -36,7 +36,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/Bondoki/aifparser"
+Repository = "https://github.com/CRC1415/AdsorptionInformationFormat-ParserNOMAD"
 
 [project.optional-dependencies]
 dev = [
