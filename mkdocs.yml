@@ -2,12 +2,14 @@ site_name: aifparser
 site_description: Parser for the .aif file (Adsorption Information File) for NOMAD
 site_author: Ron Dockhorn
 
-repo_url: https://github.com/Bondoki/aifparser
+repo_url: https://github.com/CRC1415/AdsorptionInformationFormat-ParserNOMAD
 edit_uri: ""
 
 nav:
   - Home: index.md
-  - Tutorial: tutorial/tutorial.md
+  - Tutorial:
+      - Introduction: tutorial/tutorial.md
+      - Using in NOMAD GUI: tutorial/using_in_nomad_gui.md
   - How-to guides:
       - Install this Plugin: how_to/install_this_plugin.md
       - Use this Plugin: how_to/use_this_plugin.md
@@ -48,6 +50,9 @@ markdown_extensions:
   - attr_list
   - mkdocs-click
   - pymdownx.extra
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
 extra:
   generator: false
   homepage: https://nomad-lab.eu
